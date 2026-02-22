@@ -19,10 +19,9 @@ controller:
     burst: 5
   namespaceParallelism: 10
 
-# Install CRDs separately (see setup-dev.sh) to avoid Helm release Secret exceeding 1MB.
 crds:
-  install: false
-  full: false
+  install: true
+  full: true
 
 authModes:
   - server

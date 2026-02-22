@@ -1,0 +1,19 @@
+config:
+  issuer: http://dex.dex.svc.cluster.local:5556/dex
+  storage:
+    type: memory
+  oauth2:
+    skipApprovalScreen: true
+  staticClients:
+  - id: argo-server
+    redirectURIs:
+    - 'http://argo-server.argo-workflows.svc.cluster.local:2746/oauth2/callback'
+    name: 'Argo Workflow'
+    secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+  enablePasswordDB: true
+  staticPasswords:
+  - email: "admin@example.com"
+    # bcrypt hash of the string "password"
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsP4MSRgIU/m48Z03XzB9Bq"
+    username: "admin"
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"

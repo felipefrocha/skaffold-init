@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://cloudnative-pg.github.io/charts
-    targetRevision: 0.23.0
+    repoURL: https://github.com/felipefrocha/skaffold-init.git
+    targetRevision: main
     chart: cloudnative-pg
   destination:
     server: https://kubernetes.default.svc

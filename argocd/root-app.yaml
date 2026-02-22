@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/felipefrocha/skaffold-init.git # Replaced by setup-gitops.sh
-    targetRevision: main                                 # Replaced by setup-gitops.sh
+    repoURL: https://github.com/felipefrocha/skaffold-init.git
+    targetRevision: main
     path: argocd/apps
   destination:
     server: https://kubernetes.default.svc

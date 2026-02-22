@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
-    targetRevision: v4.9.0
+    repoURL: https://github.com/felipefrocha/skaffold-init.git
+    targetRevision: main
     chart: csi-driver-nfs
     helm:
       valueFiles:
@@ -22,8 +22,8 @@ spec:
   # Wait, the correct way to apply values from the Git repo to an external Helm chart in ArgoCD:
   # The built-in way to do this in ArgoCD is Multiple Sources (available since 2.6).
   sources:
-    - repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
-      targetRevision: v4.9.0
+    - repoURL: https://github.com/felipefrocha/skaffold-init.git
+      targetRevision: main
       chart: csi-driver-nfs
       helm:
         valueFiles:

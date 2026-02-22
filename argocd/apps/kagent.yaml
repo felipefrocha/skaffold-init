@@ -8,11 +8,11 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/kagent-dev/kagent/helm
+    - repoURL: https://github.com/felipefrocha/skaffold-init.git
       chart: kagent
       # OCI targetRevision omitted, will it pull latest? We usually need to specify it. 
       # Since we don't have it, let's assume it resolves if omitted, or '*' works.
-      targetRevision: 0.1.34 # Using a placeholder matching typical kagent version or we comment out if OCI supports latest without it.
+      targetRevision: main
       helm:
         valueFiles:
           - $values/helm/kagent-values.yaml

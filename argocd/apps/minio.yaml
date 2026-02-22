@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://charts.min.io
-      targetRevision: 5.4.0
+    - repoURL: https://github.com/felipefrocha/skaffold-init.git
+      targetRevision: main
       chart: minio
       helm:
         valueFiles:
