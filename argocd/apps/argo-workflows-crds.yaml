@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/argoproj/argo-workflows.git
-    targetRevision: v3.4.17 # Safe fallback or latest 3.x if needed, let's use v3.5.5 based on the pod version in logs!
+    targetRevision: v3.5.5 # Matches deployed helm chart
     path: manifests/base/crds/full
   destination:
     server: https://kubernetes.default.svc

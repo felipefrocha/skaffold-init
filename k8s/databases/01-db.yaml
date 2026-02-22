@@ -6,6 +6,7 @@ data:
 kind: Secret
 metadata:
   name: postgresdb-app-password
+  namespace: devcontainer
   labels:
     cnpg.io/reload: "true"
 type: kubernetes.io/basic-auth
