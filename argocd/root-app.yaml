@@ -1,8 +1,14 @@
+# Bootstrap Application — applies both ApplicationSets to start the GitOps loop.
+# This is the only resource applied imperatively by setup-gitops.sh.
+# Once applied, ArgoCD self-manages all child Applications from Git.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: cluster-bootstrap
   namespace: argocd
+  annotations:
+    # Apply this before any ApplicationSet it manages
+    argocd.argoproj.io/sync-wave: "-10"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -10,7 +16,12 @@ spec:
   source:
     repoURL: https://github.com/felipefrocha/skaffold-init.git
     targetRevision: main
-    path: argocd/apps
+    # Points at the directory containing the two ApplicationSet manifests
+    path: argocd
+    directory:
+      # Only pick up the two ApplicationSet manifests, not the apps/ subdirectory
+      include: "*-appset.yaml"
+      recurse: false
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

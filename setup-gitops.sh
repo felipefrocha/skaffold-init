@@ -51,13 +51,7 @@ else
         --dry-run=client -o yaml | kubectl apply -f -
 fi
 
-echo "Replacing placeholder Repo URL with actual Repo URL in ArgoCD manifests..."
-# Temporarily replace placeholder repo URL with the actual repo URL provided by the user
-find ./argocd -type f -name "*.yaml" -exec sed -i.bak "s|repoURL:.*|repoURL: $REPO_URL|g" {} +
-find ./argocd -type f -name "*.yaml" -exec sed -i.bak "s|targetRevision:.*|targetRevision: $BRANCH|g" {} +
-find ./argocd -name "*.bak" -type f -delete
-
-echo "Applying the Root App of Apps..."
+echo "Applying bootstrap Application (root-app) — this seeds the two ApplicationSets..."
 kubectl apply -f argocd/root-app.yaml
 
 echo 

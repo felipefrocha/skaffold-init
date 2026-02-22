@@ -1,0 +1,9 @@
+{
+  "appName": "dex-idp",
+  "chart": "dex",
+  "chartRepoURL": "https://charts.dexidp.io",
+  "chartVersion": "0.20.0",
+  "valuesFile": "helm/dex-values.yaml",
+  "namespace": "dex",
+  "syncWave": "-3"
+}

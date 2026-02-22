@@ -1,0 +1,9 @@
+{
+  "appName": "minio",
+  "chart": "minio",
+  "chartRepoURL": "https://charts.min.io",
+  "chartVersion": "5.4.0",
+  "valuesFile": "helm/minio-values.yaml",
+  "namespace": "argo-artifacts",
+  "syncWave": "-2"
+}

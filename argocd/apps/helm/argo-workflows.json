@@ -1,0 +1,9 @@
+{
+  "appName": "argo-workflows",
+  "chart": "argo-workflows",
+  "chartRepoURL": "https://argoproj.github.io/argo-helm",
+  "chartVersion": "0.40.13",
+  "valuesFile": "helm/argo-workflows-values.yaml",
+  "namespace": "argo-workflows",
+  "syncWave": "-1"
+}

@@ -1,0 +1,56 @@
+# ApplicationSet bootstrap — two applicationsets discover helm and manifest apps
+# Apply this file to bootstrap the cluster (replaces root-app.yaml)
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: helm-apps
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  # Use Go templating for cleaner expressions
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - matrix:
+        generators:
+          # Discover every JSON config under argocd/apps/helm/
+          - git:
+              repoURL: https://github.com/felipefrocha/skaffold-init.git
+              revision: main
+              files:
+                - path: "argocd/apps/helm/*.json"
+          # Target the local in-cluster server (empty selector = all clusters including local)
+          - clusters: {}
+  template:
+    metadata:
+      name: "{{.appName}}"
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: "{{.syncWave}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      # Use multiple sources so the chart comes from its upstream registry
+      # while the values file stays in our Git repo.
+      sources:
+        - repoURL: "{{.chartRepoURL}}"
+          targetRevision: "{{.chartVersion}}"
+          chart: "{{.chart}}"
+          helm:
+            valueFiles:
+              - "$values/{{.valuesFile}}"
+        - repoURL: https://github.com/felipefrocha/skaffold-init.git
+          targetRevision: main
+          ref: values
+      destination:
+        server: "{{.server}}"
+        namespace: "{{.namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

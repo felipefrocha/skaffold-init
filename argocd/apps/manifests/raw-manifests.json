@@ -1,0 +1,6 @@
+{
+  "appName": "raw-manifests",
+  "path": "k8s",
+  "namespace": "argocd",
+  "syncWave": "2"
+}

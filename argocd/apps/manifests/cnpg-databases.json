@@ -1,0 +1,6 @@
+{
+  "appName": "cnpg-databases",
+  "path": "k8s/databases",
+  "namespace": "argocd",
+  "syncWave": "0"
+}

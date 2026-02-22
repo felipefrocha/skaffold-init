@@ -1,0 +1,9 @@
+{
+  "appName": "kagent",
+  "chart": "kagent",
+  "chartRepoURL": "oci://ghcr.io/kagent-dev/kagent/helm",
+  "chartVersion": "0.3.6",
+  "valuesFile": "helm/kagent-values.yaml",
+  "namespace": "kagent",
+  "syncWave": "1"
+}

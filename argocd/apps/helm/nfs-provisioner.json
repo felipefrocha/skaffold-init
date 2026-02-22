@@ -1,0 +1,9 @@
+{
+  "appName": "nfs-provisioner",
+  "chart": "csi-driver-nfs",
+  "chartRepoURL": "https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts",
+  "chartVersion": "v4.7.0",
+  "valuesFile": "helm/nfs-values.yaml",
+  "namespace": "csi-driver-nfs",
+  "syncWave": "-4"
+}

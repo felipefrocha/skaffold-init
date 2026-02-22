@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: manifest-apps
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - matrix:
+        generators:
+          # Discover each JSON config under argocd/apps/manifests/
+          - git:
+              repoURL: https://github.com/felipefrocha/skaffold-init.git
+              revision: main
+              files:
+                - path: "argocd/apps/manifests/*.json"
+          # Target the local in-cluster server
+          - clusters: {}
+  template:
+    metadata:
+      name: "{{.appName}}"
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: "{{.syncWave}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/felipefrocha/skaffold-init.git
+        targetRevision: main
+        path: "{{.path}}"
+      destination:
+        server: "{{.server}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

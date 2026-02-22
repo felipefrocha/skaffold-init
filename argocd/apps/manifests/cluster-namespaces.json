@@ -1,0 +1,6 @@
+{
+  "appName": "cluster-namespaces",
+  "path": "k8s/namespaces",
+  "namespace": "argocd",
+  "syncWave": "-5"
+}
