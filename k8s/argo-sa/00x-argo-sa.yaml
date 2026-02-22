@@ -1,0 +1,70 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pex
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: pex-role
+#   namespace: devcontainer
+# rules:
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["workflowtemplates"]
+#     verbs: ["list", "watch", "get"]
+# ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pex
+  namespace: devcontainer
+  # Optional: use when Argo SSO is enabled to restrict which SSO users can use this SA.
+  # When using SA token only (no SSO), omit so the server relies on Kubernetes RBAC.
+  # annotations:
+  #   workflows.argoproj.io/rbac-rule: "'admin' in groups"
+  #   workflows.argoproj.io/rbac-rule-precedence: "1"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pex
+  # ClusterRoleBinding is cluster-scoped; do not set namespace.
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pex
+subjects:
+  - kind: ServiceAccount
+    name: pex
+    namespace: devcontainer
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: pex-workflow-binding
+#   namespace: devcontainer
+# subjects:
+# - kind: ServiceAccount
+#   name: pex
+#   namespace: devcontainer
+# roleRef:
+#   kind: Role
+#   name: pex-workflow-role
+#   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pex.service-account-token
+  namespace: devcontainer
+  annotations:
+    kubernetes.io/service-account.name: pex
+type: kubernetes.io/service-account-token
+---
+

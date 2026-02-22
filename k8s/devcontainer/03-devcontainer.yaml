@@ -1,0 +1,107 @@
+# Devcontainer Pod + Service for local Kind cluster.
+#
+# Host path (Kind): The pod uses hostPath so the container sees a directory from
+# the Kind *node*. To expose your local folder, create the Kind cluster with
+# extraMounts so that path on the node is backed by your host. Example:
+#
+#   kind: Cluster
+#   apiVersion: kind.x-k8s.io/v1alpha4
+#   nodes:
+#   - role: control-plane
+#     extraMounts:
+#     - hostPath: /path/on/your/host   # e.g. $(pwd) or your project dir
+#       containerPath: /workspace      # must match hostPath path below
+#
+# Then apply this manifest. Override the image with your built devcontainer image.
+# Requires NFS server and nfs-csi StorageClass (e.g. helm/nfs-server.yaml).
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: devcontainer-workspace-pvc
+  namespace: devcontainer
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-csi
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pex-core-api
+  namespace: devcontainer
+spec:
+  type: ClusterIP
+  ports:
+    - name: shell
+      port: 22
+      targetPort: 22
+    - name: http
+      port: 8000
+      targetPort: 8000
+    - name: frontend
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: devcontainer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pex-core-api
+  namespace: devcontainer
+  labels:
+    app: devcontainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devcontainer
+  template:
+    metadata:
+      labels:
+        app: devcontainer
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: devcontainer
+          image: pex-core-api
+          imagePullPolicy: IfNotPresent
+          workingDir: /home/app
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: pex-env
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresdb-app
+                  key: password
+            - name: ARGO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: pex.service-account-token
+                  key: token
+
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+          # command: ["/bin/sh", "-c", "sleep infinity"]
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+      volumes:
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: devcontainer-workspace-pvc

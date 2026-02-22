@@ -1,0 +1,70 @@
+---
+workflow:
+  serviceAccount:
+    create: true
+    name: "argo-workflow"
+  rbac:
+    create: false
+
+controller:
+  workflowNamespaces:
+    - devcontainer
+    - default
+
+  parallelism: 100
+  logging:
+    level: debug
+  resourceRateLimit:
+    limit: 10
+    burst: 5
+  namespaceParallelism: 10
+
+# Install CRDs separately (see setup-dev.sh) to avoid Helm release Secret exceeding 1MB.
+crds:
+  install: false
+  full: false
+
+authModes:
+  - server
+server:
+  sso:
+    enabled: false
+    issuer: http://dex.dex.svc.cluster.local:5556
+    clientID: argo-server
+    clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
+    redirectURI: http://argo-server.argo-workflows.svc.cluster.local:2746/oauth2/callback
+    scopes:
+      - openid
+      - profile
+      - offline_access
+      - groups
+
+artifactRepository:
+  archiveLogs: true
+  s3:
+    bucket: my-bucket
+    endpoint: argo-artifacts.argo-artifacts.svc.cluster.local:9000
+    insecure: true
+    accessKeySecret:
+      name: argo-artifacts
+      key: rootUser
+    secretKeySecret:
+      name: argo-artifacts
+      key: rootPassword
+# artifactRepositoryRef:
+#   artifact-repositories:
+#     annotations:
+#       workflows.argoproj.io/default-artifact-repository: default-v1-s3-artifact-repository
+#     # 1st data of configmap. See above artifactRepository or customArtifactRepository.
+#     default-v1-s3-artifact-repository:
+#       s3:
+#         bucket: my-bucket
+#         endpoint: argo-artifacts.argo-artifacts.svc.cluster.local:9000
+#         insecure: true
+#         accessKeySecret:
+#           name: argo-artifacts
+#           key: rootUser
+#         secretKeySecret:
+#           name: argo-artfacts
+#           key: rootPassword
+

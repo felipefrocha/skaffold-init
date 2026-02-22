@@ -1,0 +1,89 @@
+---
+# PersistentVolume for local Kind (no dynamic provisioning). Omit in clusters with a default StorageClass.
+# PVs are cluster-scoped; do not set metadata.namespace.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-server-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /tmp/
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-server-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nfs-service
+  namespace: default
+spec:
+  selector:
+    role: nfs
+  ports:
+    # Open the ports required by the NFS server
+    # Port 2049 for TCP
+    - name: tcp-2049
+      port: 2049
+      protocol: TCP
+
+    # Port 111 for UDP
+    - name: udp-111
+      port: 111
+      protocol: UDP
+
+---
+# NFS server per https://github.com/normal-computing/docker-nfs-server
+# - Volume must be mounted at /mnt/data (image exports this path).
+# - privileged: true required for nfsd pseudo-filesystem.
+# - Port 2049 is NFSv4; port 111 (rpcbind) kept for compatibility.
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nfs-server-pod
+  namespace: default
+  labels:
+    role: nfs
+spec:
+  containers:
+    - name: nfs-server-container
+      image: ghcr.io/normal-computing/nfs-server:latest
+      resources:
+        requests:
+          memory: 128Mi
+          cpu: 100m
+        limits:
+          memory: 256Mi
+          cpu: 200m
+      env:
+        - name: NFS_SERVER_DEBUG
+          value: "1"
+        - name: NFS_SERVER_ALLOWED_CLIENTS
+          value: "*"
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: nfs-server-pv
+          mountPath: /mnt/data
+  volumes:
+    - name: nfs-server-pv
+      persistentVolumeClaim:
+        claimName: nfs-server-pvc

@@ -1,0 +1,17 @@
+storageClass:
+  create: true
+  name: nfs-csi
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+  parameters:
+    server: nfs-service.default.svc.cluster.local
+    share: /
+    subDir:
+    mountPermissions: "0755"
+    # csi.storage.k8s.io/provisioner-secret: "true"
+    # csi.storage.k8s.io/provisioner-secret-name: "mount-options"
+    # csi.storage.k8s.io/provisioner-secret-namespace: "default"
+  reclaimPolicy: Delete
+  volumeBindingMode: Immediate
+  mountOptions:
+    - nfsvers=4.1

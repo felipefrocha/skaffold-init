@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.min.io
+      targetRevision: 5.4.0
+      chart: minio
+      helm:
+        valueFiles:
+          - $values/helm/minio-values.yaml
+    - repoURL: https://github.com/felipefrocha/skaffold-init.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-artifacts
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

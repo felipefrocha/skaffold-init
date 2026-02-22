@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-provisioner
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  project: default
+  source:
+    repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+    targetRevision: v4.9.0
+    chart: csi-driver-nfs
+    helm:
+      valueFiles:
+        # We need to pass the raw values or use an external URL. 
+        # Since the values are in the repo, ArgoCD can't easily merge external chart + repo values.
+        # So we can use the app-of-apps pattern where the source is the repo path, and we use Helm.
+        # Actually, if we use chart source, we can pass inline values.
+        # Let's use the repo as the source with Helm.
+        - values.yaml
+  # Wait, the correct way to apply values from the Git repo to an external Helm chart in ArgoCD:
+  # The built-in way to do this in ArgoCD is Multiple Sources (available since 2.6).
+  sources:
+    - repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+      targetRevision: v4.9.0
+      chart: csi-driver-nfs
+      helm:
+        valueFiles:
+          - $values/helm/nfs-values.yaml
+    - repoURL: https://github.com/felipefrocha/skaffold-init.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: csi-driver-nfs
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

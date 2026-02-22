@@ -1,0 +1,15 @@
+auth:
+  rootUser: admin
+  rootPassword: minio123456
+buckets:
+  - name: my-bucket
+    policy: none # Can be 'none', 'download', 'upload', or 'public'
+    purge: true # Set to true to purge the bucket if it exists on install
+    versioning: false
+    objectlocking: false
+
+replicas: 2
+resources:
+  requests:
+    memory: 1Gi
+fullnameOverride: argo-artifacts

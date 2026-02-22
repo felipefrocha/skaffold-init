@@ -1,0 +1,12 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: cluster-example-one
+  namespace: default # Ensure this matches your cluster's namespace
+spec:
+  name: one # The actual database name in PostgreSQL
+  owner: app # The PostgreSQL user who will own the database
+  cluster:
+    name: cluster-example
+    
