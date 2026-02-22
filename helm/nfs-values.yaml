@@ -7,7 +7,7 @@ storageClass:
     server: nfs-service.default.svc.cluster.local
     share: /
     subDir:
-    mountPermissions: "0755"
+    mountPermissions: "0777"
     # csi.storage.k8s.io/provisioner-secret: "true"
     # csi.storage.k8s.io/provisioner-secret-name: "mount-options"
     # csi.storage.k8s.io/provisioner-secret-namespace: "default"
