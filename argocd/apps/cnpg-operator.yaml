@@ -11,6 +11,9 @@ spec:
     repoURL: https://github.com/felipefrocha/skaffold-init.git
     targetRevision: main
     chart: cloudnative-pg
+    helm:
+        valueFiles:
+          - $values/helm/cnpg-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: cnpg-system
