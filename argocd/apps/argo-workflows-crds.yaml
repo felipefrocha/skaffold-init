@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/argoproj/argo-workflows.git
-    targetRevision: v3.5.5 # Matches deployed helm chart
+    targetRevision: v3.5.14 # Bumping to fix OpenAPI validation block
     path: manifests/base/crds/full
   destination:
     server: https://kubernetes.default.svc
