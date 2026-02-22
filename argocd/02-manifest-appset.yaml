@@ -16,7 +16,7 @@ spec:
               repoURL: https://github.com/felipefrocha/skaffold-init.git
               revision: main
               files:
-                - path: "argocd/apps/manifests/*.json"
+                - path: "argocd/apps/02-manifests/*.json"
           # Target the local in-cluster server
           - clusters: {}
   template:

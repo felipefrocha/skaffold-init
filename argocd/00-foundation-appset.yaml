@@ -3,7 +3,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: helm-apps
+  name: foundation-apps
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -19,7 +19,7 @@ spec:
               repoURL: https://github.com/felipefrocha/skaffold-init.git
               revision: main
               files:
-                - path: "argocd/apps/helm/*.json"
+                - path: "argocd/apps/00-foundation/*.json"
           # Target the local in-cluster server (empty selector = all clusters including local)
           - clusters: {}
   template:

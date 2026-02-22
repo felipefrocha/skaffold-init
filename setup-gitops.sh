@@ -22,7 +22,8 @@ kubectl config use-context "$CONTEXT"
 # Install ArgoCD
 if ! kubectl get namespace argocd >/dev/null 2>&1; then
     echo "Creating argocd namespace..."
-    kubectl create namespace argocd
+    kubectl create namespace argocd 
+    kubectl create namespace devcontainer
 fi
 
 if helm repo list | grep -q 'argo'; then
@@ -52,7 +53,9 @@ else
 fi
 
 echo "Applying bootstrap Application (root-app) — this seeds the two ApplicationSets..."
-kubectl apply -f argocd/root-app.yaml
+# kubectl apply -f argocd/root-app.yaml
+kubectl apply -f argocd/00-foundation-appset.yaml
+
 
 echo 
 echo "ArgoCD setup complete. You can access the UI by running:"
